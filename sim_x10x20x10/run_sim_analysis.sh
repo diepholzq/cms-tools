@@ -162,7 +162,7 @@ elif [ "$JECDOWN" = true ]; then
     suffix="_JecDown"
 fi
 
-for sim in ${INPUT_DIR}/pMSSM_Fall17FS_set_semiLL-RunIIFall17FS_AODSIM-220914_081157-0008-SUS-RunIIFall17FS_set_semiLL_864*; do
+for sim in ${INPUT_DIR}/pMSSM_Fall17FS_set_semiLL-RunIIFall17FS_AODSIM-220914_081157-0008-*; do
     filename=$(basename $sim .root)
     modified_filename="${filename}${suffix}" # Apply suffix based on JEC option
 

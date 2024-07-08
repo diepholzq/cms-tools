@@ -66,7 +66,7 @@ if wanted_year=='2016':
     #synch with Yuval
     #systs_weightbased_nuni = ['','']#['','','TrgEff']
     #systs_weightbased_uni = []#['Isr']
-    systs_weightbased_nuni = ['','','TrgEff', "BTag", "ElSf", "MuSf"]
+    systs_weightbased_nuni = ['','','TrgEff']
     systs_weightbased_uni = ['Isr']    
 
 systs_weightbased = systs_weightbased_nuni+systs_weightbased_uni
