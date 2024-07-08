@@ -389,7 +389,7 @@ def injectValues(toReplace, year, flavour):
     return toReplace.replace("%%%", jetIsos[flavour]).replace("^^^", str(tautau_windows[flavour][0])).replace("@@@", str(tautau_windows[flavour][1])).replace("$$$", flavour).replace("***", dilepBDTString[year])
 
 def getFastSimString(year, flavour, selections): ##will add a 4th argument: extraFilters = []
-    return injectValues("{:.2f}".format(luminosities[year] * 1000) + " * " + fast_sim_weights[year] + " * (" + andStringSelections(selections) + ")", year, flavour)
+    return injectValues(fast_sim_weights[year] + " * (" + andStringSelections(selections) + ")", year, flavour) #removed lumi for pmssm hists
 
 def getFullSimString(year, flavour, selections):
     return injectValues("{:.2f}".format(luminosities[year] * 1000) + " * " +full_sim_weights[year] + " * (" + andStringSelections(selections) + ")", year, flavour)
