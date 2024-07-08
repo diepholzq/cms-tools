@@ -36,7 +36,7 @@ if nlp:
     signal_dir = "/afs/desy.de/user/n/nissanuv/nfs/x1x2x1/signal/skim_nlp/sum"
 elif phase1:
     signal_dir = "/afs/desy.de/user/n/nissanuv/nfs/x1x2x1/signal/skim_phase1/single"
-
+signal_dir = "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm"
 def main():
     points = {}
     

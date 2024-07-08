@@ -37,6 +37,11 @@ do
         POSITIONAL+=("$1")
         shift
         ;;
+        --pmssm_skims)
+        PMSSM_SKIMS=true
+        POSITIONAL+=("$1")
+        shift
+        ;;
         --jecup)
         JECUP=true
         POSITIONAL+=("$1") # Add this line to include --jecup in POSITIONAL
@@ -62,7 +67,7 @@ cd $CMS_WD
 module use -a /afs/desy.de/group/cms/modulefiles/
 module load cmssw
 cmsenv
-
+echo $PMSSM_SKIMS
 OUTPUT_DIR=$SKIM_SIG_OUTPUT_DIR
 INPUT_DIR=$SIM_NTUPLES_DIR
 
@@ -76,8 +81,10 @@ elif [ -n "$PHASE1" ]; then
 elif [ -n "$PHASE1_2018" ]; then
     INPUT_DIR=$SAM_SIM_NTUPLES_18_DIR
     OUTPUT_DIR=$SKIM_SIG_PHASE1_2018_OUTPUT_DIR
+elif [ -n "$PMSSM_SKIMS" ]; then
+    INPUT_DIR=$PMSSM_NTUPLES_DIR
+    OUTPUT_DIR=$SKIM_SIG_PMSSM_OUTPUT_DIR
 fi
-
 if [ -n "$NLP" ]; then
     OUTPUT_DIR=$SKIM_SIG_NLP_OUTPUT_DIR
 fi
@@ -100,15 +107,45 @@ if [ ! -d "$OUTPUT_DIR/stderr" ]; then
   mkdir "$OUTPUT_DIR/stderr"
 fi
 
-timestamp=$(date +%Y%m%d_%H%M%S%N)
-output_file="${WORK_DIR}/condor_submit.${timestamp}"
-echo "output file: $output_file"
-
 counter=0
 files_per_job=5 # Set number of files per job
 input_files=""
 job_count=0
 
+timestamp=$(date +%Y%m%d_%H%M%S%N)
+output_file="${WORK_DIR}/condor_submut.${timestamp}"
+echo "output file: $output_file"
+
+# cat << EOM > $output_file
+# universe = vanilla
+# should_transfer_files = IF_NEEDED
+# executable = /bin/bash
+# notification = Never
+# request_memory = 16 GB
+# EOM
+# 
+# #for sim in ${SIG_DUP_OUTPUT_DIR}/single/*; do
+# # for sim in ${INPUT_DIR}/*higgsino*; do
+# for sim in ${INPUT_DIR}/pMSSM_Fall17FS_set_semiLL-RunIIFall17FS_AODSIM-220914_081157-0009-SUS-RunIIFall17FS_set_semiLL_91*, do
+#     filename=$(basename $sim .root)
+#     if [ -f "${OUTPUT_DIR}/single/${filename}.root" ]; then
+#         echo "${OUTPUT_DIR}/single/${filename}.root exist. Skipping..."
+#         continue
+#     fi
+#     echo "Will run:"
+# #     cmd="$SIM_DIR/run_sim_analysis_single.sh -i $sim -o ${OUTPUT_DIR}/single/${filename}.root ${POSITIONAL[@]} --signal"
+#     cmd="/afs/desy.de/user/d/diepholq/CMSSW_11_3_1/src/cms-tools/analysis/scripts/skimmer_pmssm.py -i $sim --phase1 --signal"
+#     echo $cmd
+# cat << EOM >> $output_file
+# arguments = $cmd
+# error = ${OUTPUT_DIR}/stderr/${filename}.err
+# output = ${OUTPUT_DIR}/stdout/${filename}.output
+# Queue
+# EOM
+# done
+
+# condor_submit $output_file
+# rm $output_file
 cat << EOM > $output_file
 universe = vanilla
 should_transfer_files = IF_NEEDED
@@ -125,7 +162,7 @@ elif [ "$JECDOWN" = true ]; then
     suffix="_JecDown"
 fi
 
-for sim in ${INPUT_DIR}/*higgsino*; do
+for sim in ${INPUT_DIR}/pMSSM_Fall17FS_set_semiLL-RunIIFall17FS_AODSIM-220914_081157-0008-SUS-RunIIFall17FS_set_semiLL_864*; do
     filename=$(basename $sim .root)
     modified_filename="${filename}${suffix}" # Apply suffix based on JEC option
 
@@ -181,5 +218,5 @@ echo "Your Condor submission file is: $output_file"
 
 
 echo $output_file
-condor_submit $output_file
+# condor_submit $output_file
 #rm $output_file

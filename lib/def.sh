@@ -34,9 +34,10 @@ SAM_NEW_SIM_NTUPLES_DIR="/pnfs/desy.de/cms/tier2/store/user/sbein/CommonSamples/
 
 
 SAM_NEW_SIM_NTUPLES_DIR="/pnfs/desy.de/cms/tier2/store/user/sbein/CommonSamples/RadiativeMu_2016Fast/ntuple_sidecarv2/"
-SAM_SIM_NTUPLES_17_DIR="/pnfs/desy.de/cms/tier2/store/user/sbein/CommonSamples/RadiativeMu_2017Fast/ntuple_sidecarv3c/"
-SAM_SIM_NTUPLES_18_DIR="/pnfs/desy.de/cms/tier2/store/user/sbein/CommonSamples/RadiativeMu_2018Fast/ntuple_sidecarv3c/"
+SAM_SIM_NTUPLES_17_DIR="/pnfs/desy.de/cms/tier2/store/user/sbein/CommonSamples/RadiativeMu_2017Fast/ntuple_sidecarv3/"
+SAM_SIM_NTUPLES_18_DIR="/pnfs/desy.de/cms/tier2/store/user/sbein/CommonSamples/RadiativeMu_2018Fast/ntuple_sidecarv3/"
 
+PMSSM_NTUPLES_DIR="/pnfs/desy.de/cms/tier2/store/user/vkutzner/NtupleHub/ProductionRun2v3/"
 #SAM_NEW_SIM_NTUPLES_DIR="/nfs/dust/cms/user/beinsam/CommonSamples/NtupleMaker/3March2020/CMSSW_9_4_11/src/TreeMaker/Production/test"
 DATA_NTUPLES_DIR="/pnfs/desy.de/cms/tier2/store/user/*/NtupleHub/ProductionRun2v3*"
 
@@ -93,8 +94,8 @@ LEPTON_TRACK_DIR="$CMS_TOOLS/analysis/lepton_track"
 BG_SCRIPTS="$CMS_TOOLS/bg/scripts"
 ANALYZER_PATH="$SCRIPTS_WD/analyzer_x1x2x1.py"
 #SKIMMER_PATH="$SCRIPTS_WD/skimmer_x1x2x1.py"
-#SKIMMER_PATH="$SCRIPTS_WD/skimmer_x1x2x1.py"
-SKIMMER_PATH="$SCRIPTS_WD/skimmer_x1x2x1_syst.py" #sb added
+SKIMMER_PATH="$SCRIPTS_WD/skimmer_x1x2x1.py"
+PMSSM_SKIMMER_PATH="$SCRIPTS_WD/skimmer_pmssm.py"
 JPSI_SKIMMER_PATH="$SCRIPTS_WD/skimmer_x1x2x1_jpsi.py"
 MINI_SKIMMER_PATH="$SCRIPTS_WD/mini_skimmer_x1x2x1.py"
 SELECTION_SKIMMER_PATH="$SCRIPTS_WD/skimmer_selection.py"
@@ -103,10 +104,9 @@ CLONE_SCRIPT="$SCRIPTS_WD/clone_tree_split.py"
 CLONE_SINGLE="$SIM_DIR/clone_sim_file_single.sh"
 CS_SINGLE="$SIM_DIR/calculate_cross_section_single.sh"
 
-OUTPUT_WD="/nfs/dust/cms/user/beinsam/x1x2x1" #these lines to change to me
-YUVAL_OUTPUT_WD="/nfs/dust/cms/user/nissanuv/x1x2x1"
-TWO_LEPTONS_OUTPUT_WD="/nfs/dust/cms/user/nissanuv/2lx1x2x1" #these lines to change to me
-DY_OUTPUT_WD="/nfs/dust/cms/user/nissanuv/dy_x1x2x1" #these lines to change to me
+OUTPUT_WD="/nfs/dust/cms/user/diepholq/x1x2x1"
+TWO_LEPTONS_OUTPUT_WD="/nfs/dust/cms/user/diepholq/2lx1x2x1"
+DY_OUTPUT_WD="/nfs/dust/cms/user/diepholq/dy_x1x2x1"
 
 DATA_DIR="$CMS_TOOLS/data"
 BG_DIR="$CMS_TOOLS/bg"
@@ -123,6 +123,7 @@ DY_SKIM_OUTPUT_DIR="$OUTPUT_WD/bg/skim_dy"
 LC_OUTPUT_DIR="$OUTPUT_WD/bg/lc"
 LC_DATA_OUTPUT_DIR="$OUTPUT_WD/data/lc"
 SKIM_SIG_OUTPUT_DIR="$OUTPUT_WD/signal/skim"
+SKIM_SIG_PMSSM_OUTPUT_DIR="$OUTPUT_WD/signal/skim_pmssm"
 SKIM_SIG_SAM_OUTPUT_DIR="$OUTPUT_WD/signal/skim_sam"
 SKIM_SIG_PHASE1_OUTPUT_DIR="$OUTPUT_WD/signal/skim_phase1"
 SKIM_SIG_PHASE1_2018_OUTPUT_DIR="$OUTPUT_WD/signal/skim_phase1_2018"
@@ -168,21 +169,17 @@ SKIM_DATA_JPSI_SINGLE_ELECTRON_OUTPUT_DIR="$OUTPUT_WD/data/skim_jpsi_single_elec
 SKIM_DATA_Z_PEAK_OUTPUT_DIR="$OUTPUT_WD/data/skim_z"
 
 SIG_DUP_OUTPUT_DIR="$OUTPUT_WD/signal/dup"
-#LEPTON_TRACK_SPLIT_DIR="$OUTPUT_WD/signal/lepton_track"
-#LEPTON_TRACK_PHASE1_SPLIT_DIR="$OUTPUT_WD/signal/lepton_track_phase1"
-LEPTON_TRACK_SPLIT_DIR="$YUVAL_OUTPUT_WD/signal/lepton_track"
-LEPTON_TRACK_PHASE1_SPLIT_DIR="$YUVAL_OUTPUT_WD/signal/lepton_track_phase1"
+LEPTON_TRACK_SPLIT_DIR="$OUTPUT_WD/signal/lepton_track"
+LEPTON_TRACK_PHASE1_SPLIT_DIR="$OUTPUT_WD/signal/lepton_track_phase1"
+
 
 SPLIT_JPSI_MASTER_OUTPUT_DIR="$SKIM_MASTER_OUTPUT_DIR/split"
 
 RGS_DIR="/afs/desy.de/user/n/nissanuv/cms-tools/analysis/cut_optimisation/rgs"
 RESUMMINO_BIN="/afs/desy.de/user/n/nissanuv/local/bin/resummino"
-#DILEPTON_BDT_DIR="$OUTPUT_WD/cut_optimisation/tmva/dilepton_bdt"
-#DILEPTON_BDT_PHASE1_DIR="$OUTPUT_WD/cut_optimisation/tmva/dilepton_bdt_phase1"
-#DILEPTON_TWO_LEPTONS_BDT_DIR="$TWO_LEPTONS_OUTPUT_WD/cut_optimisation/tmva/dilepton_bdt"
-DILEPTON_BDT_DIR="$YUVAL_OUTPUT_WD/cut_optimisation/tmva/dilepton_bdt"
-DILEPTON_BDT_PHASE1_DIR="$YUVAL_OUTPUT_WD/cut_optimisation/tmva/dilepton_bdt_phase1"
-DILEPTON_TWO_LEPTONS_BDT_DIR="$YUVAL_OUTPUT_WD/cut_optimisation/tmva/dilepton_bdt"
+DILEPTON_BDT_DIR="$OUTPUT_WD/cut_optimisation/tmva/dilepton_bdt"
+DILEPTON_BDT_PHASE1_DIR="$OUTPUT_WD/cut_optimisation/tmva/dilepton_bdt_phase1"
+DILEPTON_TWO_LEPTONS_BDT_DIR="$TWO_LEPTONS_OUTPUT_WD/cut_optimisation/tmva/dilepton_bdt"
 
 if [[ `hostname` == *".desy.de"* ]]; then
     echo Running in DESY

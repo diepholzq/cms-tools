@@ -23,6 +23,11 @@ do
         SKIM=true
         shift # past argument
         ;;
+        --pmssm_skims)
+        PMSSM_SKIMS=true
+        POSITIONAL+=("$1")
+        shift
+        ;;
         *)    # unknown option
         POSITIONAL+=("$1") # save it in an array for later
         shift # past argument
@@ -36,7 +41,8 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 shopt -s expand_aliases
 
 # CMS ENV
-cd /nfs/dust/cms/user/beinsam/NaturalSusy/CMSSW_11_3_1/src/
+# cd /nfs/dust/cms/user/beinsam/NaturalSusy/CMSSW_11_3_1/src/
+cd /afs/desy.de/user/d/diepholq/CMSSW_11_3_1/src
 
 export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
 source $VO_CMS_SW_DIR/cmsset_default.sh
@@ -44,6 +50,8 @@ source $VO_CMS_SW_DIR/cmsset_default.sh
 cmsenv
 
 . "$CMSSW_BASE/src/cms-tools/lib/def.sh"
+# export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$CMSSW_BASE/src/cms-tools/lib/classes"
+# export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/nfs/dust/cms/user/beinsam/NaturalSusy/CMSSW_11_3_1/src/cms-tools/lib/classes"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$CMSSW_BASE/src/cms-tools/lib/classes"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/nfs/dust/cms/user/beinsam/NaturalSusy/CMSSW_11_3_1/src/cms-tools/lib/classes"
 
@@ -51,6 +59,10 @@ SCRIPT_PATH=$ANALYZER_PATH
 if [ -n "$SKIM" ]; then
     echo "GOT SKIM"
     SCRIPT_PATH=$SKIMMER_PATH
+fi
+if [ -n "$PMSSM_SKIMS" ]; then
+    echo "GOT PMSSM SKIM"
+    SCRIPT_PATH=$PMSSM_SKIMMER_PATH
 fi
 
 # Process each input filee
