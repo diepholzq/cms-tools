@@ -37,6 +37,11 @@ do
         POSITIONAL+=("$1")
         shift
         ;;
+        --pmssm_skims)
+        PMSSM_SKIMS=true
+        POSITIONAL+=("$1")
+        shift
+        ;;
         *)    # unknown option
         POSITIONAL+=("$1") # save it in an array for later
         shift # past argument
@@ -83,7 +88,11 @@ elif [ -n "$PHASE1_2018" ]; then
 elif [ -n "$ONPHASE0" ]; then
     echo "GOT ONPHASE0"
     BDT_DIR=$OUTPUT_WD/cut_optimisation/tmva/dilepton_bdt_phase1
+elif [ -n "$PMSSM_SKIMS" ]; then
+    INPUT_DIR=$SKIM_SIG_PMSSM_OUTPUT_DIR
+    OUTPUT_DIR="/afs/desy.de/user/n/nissanuv/nfs/x1x2x1/cut_optimisation/tmva/dilepton_bdt_phase1"
 fi
+
 
 
 
@@ -136,5 +145,6 @@ Queue
 EOM
 done
 
-condor_submit $output_file
+echo $output_file
+# condor_submit $output_file
 #rm $output_file
