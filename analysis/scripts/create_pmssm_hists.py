@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.8
+# /usr/bin/env python3
 
 from ROOT import *
 from glob import glob
@@ -111,8 +111,10 @@ partial_unblinding_portion = 10
 
 output_file = None
 
-if args.output_file: output_file = args.output_file[0]
-else: output_file = "sig_bg_histograms_data_driven_" + wanted_year + "_" + channel + ("_uniform_binning" if use_uniform_binning else "") + ("_partial_unblinding" if partial_unblinding else "") + ".root"
+# if args.output_file: output_file = args.output_file[0]
+# else: output_file = "sig_bg_histograms_data_driven_" + wanted_year + "_" + channel + ("_uniform_binning" if use_uniform_binning else "") + ("_partial_unblinding" if partial_unblinding else "") + ".root"
+
+output_file = args.output_file[0] if args.output_file else f"sig_bg_histograms_data_driven_{wanted_year}_{channel}{'_uniform_binning' if use_uniform_binning else ''}{'_partial_unblinding' if partial_unblinding else ''}.root"
 
 if jecup: output_file = output_file.replace('.root','_JecUp.root')
 if jecdown: output_file = output_file.replace('.root','_JecDown.root')    
@@ -684,12 +686,9 @@ def main():
                             formula_uni_weights = TTreeFormula("formula_uni", uni_weights, tree)
                             eval_weights_nuni = formula_nuni_weights.EvalInstance()
                             eval_weights_uni = formula_uni_weights.EvalInstance()
-#                             pMSSMid1 = np.random.rand()*200
-#                             pMSSMid2 = np.random.rand()*100000
-#                             bdt_val = getattr(tree, observable)
+                            bdt_val = getattr(tree, observable)
                             selection_passed += int(1)
-#                             sr_bin = h_skel.GetXaxis().FindBin(bdt_val)
-                            sr_bin = int(2)
+                            sr_bin = h_skel.GetXaxis().FindBin(bdt_val)
                             coordinates = np.float64([pMSSMid1,pMSSMid2,sr_bin])
                             thnsparse_nuni.Fill(coordinates, eval_weights_nuni)
                             thnsparse_all.Fill(coordinates, eval_weights_uni)

@@ -53,9 +53,10 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 
 # CMS ENV
 cd $CMS_WD
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/afs/desy.de/user/d/diepholq/CMSSW_13_3_3/lib/el9_amd64_gcc12
 . /etc/profile.d/modules.sh
 module use -a /afs/desy.de/group/cms/modulefiles/
-module load cmssw
+module load cmssw/el9_amd64_gcc11
 cmsenv
 
 
@@ -89,8 +90,9 @@ elif [ -n "$ONPHASE0" ]; then
     echo "GOT ONPHASE0"
     BDT_DIR=$OUTPUT_WD/cut_optimisation/tmva/dilepton_bdt_phase1
 elif [ -n "$PMSSM_SKIMS" ]; then
+    echo "GOT PMSSM_SKIMS"
     INPUT_DIR=$SKIM_SIG_PMSSM_OUTPUT_DIR
-    OUTPUT_DIR="/afs/desy.de/user/n/nissanuv/nfs/x1x2x1/cut_optimisation/tmva/dilepton_bdt_phase1"
+    BDT_DIR="/afs/desy.de/user/n/nissanuv/nfs/x1x2x1/cut_optimisation/tmva/dilepton_bdt_phase1"
 fi
 
 
@@ -114,6 +116,7 @@ EOM
 if [ -n "$SAM" ] || [ -n "$PHASE1" ] || [ -n "$PHASE1_2018" ]; then
     FILES=${INPUT_DIR}/sum/*
 else
+    echo HERE
     FILES=${INPUT_DIR}/single/*
 fi
 #FILES=(mChipm160GeV_dm0p44GeV.root mChipm140GeV_dm4p28GeV.root)

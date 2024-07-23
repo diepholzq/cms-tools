@@ -24,10 +24,10 @@ def prepareReaderBtagSF():
     ROOT.gSystem.Load('libCondToolsBTau') 
 
     # OR using standalone code:
-    #ROOT.gROOT.ProcessLine('.L ./BTagCalibrationStandalone.cpp+')
+#     ROOT.gROOT.ProcessLine('.L ./BTagCalibrationStandalone.cpp+')
     
     # get the sf data loaded 
-    calib = ROOT.BTagCalibration('deepcsv', os.environ['CMSSW_BASE']+'/src/systematics/DeepCSV_Moriond17_B_H.csv')
+    calib = ROOT.BTagCalibration('deepcsv', os.environ['CMSSW_BASE']+'/src/systematics/DeepCSV_Moriond17_B_H.csv', True)
 
     # making a std::vector<std::string>> in python is a bit awkward, 
     # but works with root (needed to load other sys types):

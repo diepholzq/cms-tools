@@ -65,7 +65,7 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 cd $CMS_WD
 . /etc/profile.d/modules.sh
 module use -a /afs/desy.de/group/cms/modulefiles/
-module load cmssw
+module load cmssw/el9_amd64_gcc11
 cmsenv
 echo $PMSSM_SKIMS
 OUTPUT_DIR=$SKIM_SIG_OUTPUT_DIR
@@ -108,7 +108,7 @@ if [ ! -d "$OUTPUT_DIR/stderr" ]; then
 fi
 
 counter=0
-files_per_job=5 # Set number of files per job
+files_per_job=20 # Set number of files per job
 input_files=""
 job_count=0
 
@@ -162,7 +162,7 @@ elif [ "$JECDOWN" = true ]; then
     suffix="_JecDown"
 fi
 
-for sim in ${INPUT_DIR}/pMSSM_Fall17FS_set_semiLL-RunIIFall17FS_AODSIM-220914_081157-0008-*; do
+for sim in ${INPUT_DIR}/pMSSM_Fall17FS_set_semiLL-RunIIFall17FS*; do
     filename=$(basename $sim .root)
     modified_filename="${filename}${suffix}" # Apply suffix based on JEC option
 

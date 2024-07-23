@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from ROOT import *
 from glob import glob
@@ -43,10 +43,10 @@ parser.add_argument('-jpsi_muons', '--jpsi_muons', dest='jpsi_muons', help='JPSI
 parser.add_argument('-phase1', '--phase1', dest='phase1', help='JPSI Muons Skim', action='store_true')
 parser.add_argument('-phase1_2018', '--phase1_2018', dest='phase1_2018', help='Phase1 2018 Samples', action='store_true')
 parser.add_argument('-onphase0', '--onphase0', dest='onphase0', help='Write phase1 bdt on phase0 skims', action='store_true')
-
+parser.add_argument('--pmssm_skims', action='store_true')
 args = parser.parse_args()
 
-print args
+print(args)
 
 signal = args.signal
 bg = args.bg
@@ -55,6 +55,7 @@ two_leptons = args.two_leptons
 ex_track_only = args.ex_track_only
 no_scan = args.no_scan
 onphase0 = args.onphase0
+pmssm_skims = args.pmssm_skims
 
 input_file = None
 if args.input_file:
@@ -70,11 +71,11 @@ jpsi = False
 
 if jpsi_muons:
     jpsi = True
-    print "Got JPSI"
+    print("Got JPSI")
     if jpsi_muons:
-        print "MUONS"
+        print("MUONS")
     else:
-        print "ELECTRONS"
+        print("ELECTRONS")
 
 ######## END OF CMDLINE ARGUMENTS ########
 
@@ -129,13 +130,13 @@ def main():
                 
                         for DTypeObs in analysis_observables.commonPostBdtObservablesDTypesList:
                             
-                            analysis_categories = ["", "exTrack_"]
+                            analysis_categories = [""]
                             if two_leptons:
                                 analysis_categories = [""]
                             if ex_track_only:
                                 analysis_categories = ["exTrack_"]
                             for prefix in analysis_categories:
-                                sameChargeOptions = [False, True] if prefix == "exTrack_" else [False]
+                                sameChargeOptions = [False]
                             
                                 for sameCharge in sameChargeOptions:
                             
@@ -145,12 +146,12 @@ def main():
                                     
                                     vars[observableStr] = np.zeros(1,dtype=analysis_observables.commonPostBdtObservablesDTypesList[DTypeObs])
                                     if tree.GetBranchStatus(observableStr):
-                                        print "Reseting branch", observableStr
+                                        print("Reseting branch", observableStr)
                                         branches[observableStr] = tree.GetBranch(observableStr)
                                         branches[observableStr].Reset()
                                         tree.SetBranchAddress(observableStr, vars[observableStr])
                                     else:
-                                        print "Branching", observableStr
+                                        print("Branching", observableStr)
                                         branches[observableStr] = tree.Branch(observableStr, vars[observableStr], observableStr + "/" + utils.typeTranslation[analysis_observables.commonPostBdtObservablesDTypesList[DTypeObs]])
                                         tree.SetBranchAddress(observableStr, vars[observableStr])
                         
@@ -162,18 +163,18 @@ def main():
                                     observableStr = sc_prefix + DTypeObs + phaseStr + postfix
                                     vars[observableStr] = np.zeros(1,dtype=analysis_observables.exclusiveTrackPostBdtObservablesDTypesList[DTypeObs])
                                     if tree.GetBranchStatus(sc_prefix + DTypeObs + phaseStr + postfix):
-                                        print "Reseting branch", observableStr
+                                        print("Reseting branch", observableStr)
                                         branches[observableStr] = tree.GetBranch(observableStr)
                                         branches[observableStr].Reset()
                                         tree.SetBranchAddress(observableStr, vars[observableStr])
                                     else:
-                                        print "Branching", observableStr
+                                        print("Branching", observableStr)
                                         branches[observableStr] = tree.Branch(observableStr, vars[observableStr], observableStr + "/" + utils.typeTranslation[analysis_observables.exclusiveTrackPostBdtObservablesDTypesList[DTypeObs]])
                                         tree.SetBranchAddress(observableStr, vars[observableStr])
                 
                     if not jpsi:
                         
-                        prefixes = ["reco", "exTrack"]
+                        prefixes = ["reco"]
                         if two_leptons:
                             prefixes = ["reco"]
                         elif ex_track_only:
@@ -197,13 +198,13 @@ def main():
                                 bdt_specs_maps[prefix + lep + iso + cuts + cat] = bdt_specs_map
                                 bdt_readers[prefix + lep + iso + cuts + cat] = bdt_reader
 
-    print 'Analysing', nentries, "entries"
+    print('Analysing', nentries, "entries")
     
     iFile.cd()
     counting = 0
     for ientry in range(nentries):
         if ientry % 1000 == 0:
-            print "Processing " + str(ientry) + " out of " + str(nentries)
+            print("Processing " + str(ientry) + " out of " + str(nentries))
         tree.GetEntry(ientry)
         
         for iso in utils.leptonIsolationList:
@@ -228,7 +229,7 @@ def main():
                         #    postfixi = [iso + cuts + cat, ""]
                 
                         for postfix in postfixi:
-                            prefixes = ["reco", "exTrack"]
+                            prefixes = ["reco"]
                             if two_leptons:
                                 prefixes = ["reco"]
                             elif ex_track_only:
@@ -307,9 +308,9 @@ def main():
                                                         v[0] = getattr(tree, sc_prefix + k)
                                                 
                                             except Exception as e:
-                                                print "exception", e
-                                                print ientry, k, name, getattr(tree, "twoLeptons"  + iso + cuts + cat), getattr(tree, "exclusiveTrack"  + iso + cuts + cat)
-                                                print "ERROR!!! GIVING UP..."
+                                                print("exception", e)
+                                                print(ientry, k, name, getattr(tree, "twoLeptons"  + iso + cuts + cat), getattr(tree, "exclusiveTrack"  + iso + cuts + cat))
+                                                print("ERROR!!! GIVING UP...")
                                                 exit(1)
                                         for k, v in bdt_specs_maps[prefix + leptonFlavour + iso + cuts + cat].items():
                                             if data and k == "Weight":
@@ -356,7 +357,7 @@ def main():
                                             vars[sc_prefix + "trackParentPdgId" + phaseStr + postfix][0] = -1
                             
                             for DTypeObs in analysis_observables.commonPostBdtObservablesDTypesList:
-                                analysis_categories = ["", "exTrack_"]
+                                analysis_categories = [""]
                                 if two_leptons:
                                     analysis_categories = [""]
                                 if ex_track_only:
@@ -378,7 +379,7 @@ def main():
             
     tree.Write("tEvent",TObject.kOverwrite)
         
-    print "DONE SKIMMING counting=" + str(counting)
+    print("DONE SKIMMING counting=" + str(counting))
     iFile.Close()
 
 main()
