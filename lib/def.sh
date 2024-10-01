@@ -37,7 +37,8 @@ SAM_NEW_SIM_NTUPLES_DIR="/pnfs/desy.de/cms/tier2/store/user/sbein/CommonSamples/
 SAM_SIM_NTUPLES_17_DIR="/pnfs/desy.de/cms/tier2/store/user/sbein/CommonSamples/RadiativeMu_2017Fast/ntuple_sidecarv3/"
 SAM_SIM_NTUPLES_18_DIR="/pnfs/desy.de/cms/tier2/store/user/sbein/CommonSamples/RadiativeMu_2018Fast/ntuple_sidecarv3/"
 
-PMSSM_NTUPLES_DIR="/pnfs/desy.de/cms/tier2/store/user/vkutzner/NtupleHub/ProductionRun2v3/"
+# PMSSM_NTUPLES_DIR="/pnfs/desy.de/cms/tier2/store/user/vkutzner/NtupleHub/ProductionRun2v3/" #for semi LL
+PMSSM_NTUPLES_DIR="/pnfs/desy.de/cms/tier2/store/user/sbein/NtupleHub/ProductionRun2v4"
 #SAM_NEW_SIM_NTUPLES_DIR="/nfs/dust/cms/user/beinsam/CommonSamples/NtupleMaker/3March2020/CMSSW_9_4_11/src/TreeMaker/Production/test"
 DATA_NTUPLES_DIR="/pnfs/desy.de/cms/tier2/store/user/*/NtupleHub/ProductionRun2v3*"
 
@@ -93,8 +94,10 @@ CONDOR_WRAPPER="$SCRIPTS_WD/condor_wrapper.sh"
 LEPTON_TRACK_DIR="$CMS_TOOLS/analysis/lepton_track"
 BG_SCRIPTS="$CMS_TOOLS/bg/scripts"
 ANALYZER_PATH="$SCRIPTS_WD/analyzer_x1x2x1.py"
+BDT_SKIMMER_PATH="$SCRIPTS_WD/skimmer_x1x2x1_dilepton_bdt.py"
 #SKIMMER_PATH="$SCRIPTS_WD/skimmer_x1x2x1.py"
 SKIMMER_PATH="$SCRIPTS_WD/skimmer_x1x2x1.py"
+SKIMMER_SYST_PATH="$SCRIPTS_WD/skimmer_x1x2x1_syst.py"
 PMSSM_SKIMMER_PATH="$SCRIPTS_WD/skimmer_pmssm.py"
 JPSI_SKIMMER_PATH="$SCRIPTS_WD/skimmer_x1x2x1_jpsi.py"
 MINI_SKIMMER_PATH="$SCRIPTS_WD/mini_skimmer_x1x2x1.py"

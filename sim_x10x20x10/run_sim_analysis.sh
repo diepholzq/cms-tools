@@ -67,7 +67,6 @@ cd $CMS_WD
 module use -a /afs/desy.de/group/cms/modulefiles/
 module load cmssw/el9_amd64_gcc11
 cmsenv
-echo $PMSSM_SKIMS
 OUTPUT_DIR=$SKIM_SIG_OUTPUT_DIR
 INPUT_DIR=$SIM_NTUPLES_DIR
 
@@ -85,6 +84,11 @@ elif [ -n "$PMSSM_SKIMS" ]; then
     INPUT_DIR=$PMSSM_NTUPLES_DIR
     OUTPUT_DIR=$SKIM_SIG_PMSSM_OUTPUT_DIR
 fi
+# elif [ -n "$PMSSM_SKIMS" ]; then          #for use of yuval's skims
+#     INPUT_DIR=$SAM_SIM_NTUPLES_17_DIR
+#     OUTPUT_DIR="$SKIM_SIG_PMSSM_OUTPUT_DIR/phase1_skims"
+#     echo $OUTPUT_DIR
+# fi
 if [ -n "$NLP" ]; then
     OUTPUT_DIR=$SKIM_SIG_NLP_OUTPUT_DIR
 fi
@@ -108,7 +112,7 @@ if [ ! -d "$OUTPUT_DIR/stderr" ]; then
 fi
 
 counter=0
-files_per_job=20 # Set number of files per job
+files_per_job=1 # Set number of files per job
 input_files=""
 job_count=0
 
@@ -162,7 +166,8 @@ elif [ "$JECDOWN" = true ]; then
     suffix="_JecDown"
 fi
 
-for sim in ${INPUT_DIR}/pMSSM_Fall17FS_set_semiLL-RunIIFall17FS*; do
+# for sim in ${INPUT_DIR}/pMSSM_Fall17FS_set_semiLL-RunIIFall17FS*; do #for semi LL
+for sim in ${INPUT_DIR}/Fall17Fast.PMSSM_set_1_LL_TuneCP2*; do
     filename=$(basename $sim .root)
     modified_filename="${filename}${suffix}" # Apply suffix based on JEC option
 

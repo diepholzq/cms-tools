@@ -598,6 +598,7 @@ def main():
     currLeptonCollectionFileMapFile = None
     
     print("Starting Loop")
+    not_rightProcess_events = 0
     for ientry in range(nentries):
         if ientry % 1000 == 0:
             print("Processing " + str(ientry))
@@ -607,7 +608,8 @@ def main():
         rightProcess = True
     
         if signal and not sam:
-            rightProcess = analysis_ntuples.isX1X2X1Process(c)
+            # rightProcess = analysis_ntuples.isX1X2X1Process(c)
+            rightProcess = True
         elif bg:
             if "DYJetsToLL_M-5to50_" not in input_file and "Summer16ForYuval.WZTo3LNu_mllmin01" not in input_file:
                 crossSection = c.CrossSection
@@ -630,14 +632,15 @@ def main():
         thnsparse.Fill(coordinates, weight)
 
         if not rightProcess:
+            not_rightProcess_events += 1
             continue
-            
         count += 1
         if not data:
             hHtAfterMadHt.Fill(c.madHT)
         
         nL = c.Electrons.size() + c.Muons.size()
-        nT = c.tracks.size()
+#         nT = c.tracks.size()
+        nT = 0
     
         #### GEN LEVEL STUFF ####
         nLGen = 0
@@ -697,6 +700,7 @@ def main():
             vars["passed2016BFilter"][0] = True
         
         for tracksOb in analysis_observables.tracksObs:
+            break #We don't care about tracks for the pMSSM scan
             tracksObs[tracksOb] = getattr(c, tracksOb)
         
         for pionsOb in analysis_observables.pionsObs:
@@ -791,7 +795,7 @@ def main():
             for tracksOb in analysis_observables.tracksObs:
                 tracksObs[tracksOb] = cppyy.gbl.std.vector(eval(analysis_observables.tracksObs[tracksOb]))()
         
-            for i in range(c.tracks.size()):
+            for i in range(nT):
                 if all(abs(c.Muons[j].DeltaR(c.tracks[i])) > 0.01 for j in muons):
                     for tracksOb in analysis_observables.tracksObs:
                         if analysis_observables.tracksObs[tracksOb] == "bool":
@@ -1668,6 +1672,7 @@ def main():
                     lepsf*=muIdiso.GetBinContent(binpt, bineta)    
                     print('reaching into FF', muIdFastFull.GetName())                    
                     xax = muIdFastFull.GetXaxis()
+                    leppt, lepeta = max(xax.GetBinLowEdge(1)+0.000001, muonsObs["Muons"][imu].Pt()), abs(muonsObs["Muons"][imu].Eta())
                     binpt = min(xax.FindBin(leppt), xax.GetNbins())
                     yax = muIdFastFull.GetYaxis()
                     bineta = min(yax.FindBin(lepeta), yax.GetNbins())
@@ -1713,6 +1718,8 @@ def main():
         #print("tEvent.Fill()")
         #print("c.RunNum,", c.RunNum,"c.LumiBlockNum,", c.LumiBlockNum, "c.EvtNum", c.EvtNum)
         tEvent.Fill()
+
+    print(f"Events skipped because not rightProcess: {not_rightProcess_events}. Total number of events: {nentries}")
 
     fnew.cd()
     tEvent.Write()

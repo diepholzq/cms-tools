@@ -92,11 +92,15 @@ elif [ -n "$ONPHASE0" ]; then
 elif [ -n "$PMSSM_SKIMS" ]; then
     echo "GOT PMSSM_SKIMS"
     INPUT_DIR=$SKIM_SIG_PMSSM_OUTPUT_DIR
+    # INPUT_DIR="/afs/desy.de/user/d/diepholq/nfs/x1x2x1/signal/skim_pmssm/phase1_skims"    for use of yuvals skims
     BDT_DIR="/afs/desy.de/user/n/nissanuv/nfs/x1x2x1/cut_optimisation/tmva/dilepton_bdt_phase1"
 fi
 
 
-
+counter=0
+files_per_job=20 # Set number of files per job
+job_count=0
+input_files=""
 
 timestamp=$(date +%Y%m%d_%H%M%S%N)
 output_file="${WORK_DIR}/condor_submut.${timestamp}"
@@ -135,19 +139,54 @@ for sim in ${FILES[@]}; do
 #     fi
     
     filename=`echo $(basename $sim .root)`
-    echo $filename
-    tb=all
-    echo "Will run:"
-    #echo $CONDOR_WRAPPER $SCRIPTS_WD/skimmer_x1x2x1_univ_bdt_track_bdt.py -i $sim -o ${OUTPUT_DIR}/single/${filename}.root -tb $LEPTON_TRACK_SPLIT_DIR/cut_optimisation/tmva/$tb  -ub $OUTPUT_WD/cut_optimisation/tmva/total_bdt $@
-    echo $CONDOR_WRAPPER $SCRIPTS_WD/skimmer_x1x2x1_dilepton_bdt.py -i $sim -bdt $BDT_DIR $@
-cat << EOM >> $output_file
-arguments = $CONDOR_WRAPPER $SCRIPTS_WD/skimmer_x1x2x1_dilepton_bdt.py -i $sim -bdt $BDT_DIR $@
-error = ${INPUT_DIR}/stderr/${filename}_dilepton_bdt.err
-output = ${INPUT_DIR}/stdout/${filename}_dilepton_bdt.output
+
+        # Accumulate input files for batching
+    if [ -z "$input_files" ]; then
+        # If input_files is empty, just add the first file without a leading comma
+        input_files="$sim"
+    else
+        # If input_files is not empty, prepend the new file with a comma
+        input_files="$sim,$input_files"
+    fi
+    ((counter++))
+    if [ $((counter % files_per_job)) == 0 ]; then
+        ((job_count++))
+        cmd="$CONDOR_WRAPPER $SIM_DIR/run_skim_signal_dilepton_bdt_single.sh -i $input_files -bdt $BDT_DIR $@"
+        echo "Will run batch $job_count:"
+        echo $cmd
+        cat << EOM >> $output_file
+arguments = $cmd
+error = ${INPUT_DIR}/stderr/${filename}_dilepton_bdt_${job_count}.err
+output = ${INPUT_DIR}/stdout/${filename}_dilepton_bdt_${job_count}.output
 Queue
 EOM
+        input_files="" # Reset input files for the next batch
+    fi
 done
+#was before Qeueueue
+#     tb=all
+#     echo "Will run:"
+#     #echo $CONDOR_WRAPPER $SCRIPTS_WD/skimmer_x1x2x1_univ_bdt_track_bdt.py -i $sim -o ${OUTPUT_DIR}/single/${filename}.root -tb $LEPTON_TRACK_SPLIT_DIR/cut_optimisation/tmva/$tb  -ub $OUTPUT_WD/cut_optimisation/tmva/total_bdt $@
+#     echo $CONDOR_WRAPPER $SCRIPTS_WD/skimmer_x1x2x1_dilepton_bdt.py -i $sim -bdt $BDT_DIR $@
+# cat << EOM >> $output_file
+# arguments = $CONDOR_WRAPPER $SCRIPTS_WD/skimmer_x1x2x1_dilepton_bdt.py -i $sim -bdt $BDT_DIR $@
+# error = ${INPUT_DIR}/stderr/${filename}_dilepton_bdt.err
+# output = ${INPUT_DIR}/stdout/${filename}_dilepton_bdt.output
+# Handle remaining files for the last batch if it does not fill up completely
+if [ $((counter % files_per_job)) != 0 ]; then
+    ((job_count++))
+    cmd="$CONDOR_WRAPPER $SIM_DIR/run_skim_signal_dilepton_bdt_single.sh -i $sim -bdt $BDT_DIR $@"
+    echo "Will run batch $job_count:"
+    echo $cmd
+    cat << EOM >> $output_file
+arguments = $cmd
+error = ${INPUT_DIR}/stderr/${filename}_dilepton_bdt_${job_count}.err
+output = ${INPUT_DIR}/stdout/${filename}_dilepton_bdt_${job_count}.output
+Queue
+EOM
+fi
 
-echo $output_file
+echo "Number of jobs to be run: $job_count"
+echo "Your Condor submission file is: $output_file"
 # condor_submit $output_file
 #rm $output_file

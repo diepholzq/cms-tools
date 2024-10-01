@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python3
 
 from ROOT import *
 from glob import glob
@@ -35,8 +35,9 @@ signal_dir = "/afs/desy.de/user/n/nissanuv/nfs/x1x2x1/signal/skim/single"
 if nlp:
     signal_dir = "/afs/desy.de/user/n/nissanuv/nfs/x1x2x1/signal/skim_nlp/sum"
 elif phase1:
-    signal_dir = "/afs/desy.de/user/n/nissanuv/nfs/x1x2x1/signal/skim_phase1/single"
-signal_dir = "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm"
+#     signal_dir = "/afs/desy.de/user/n/nissanuv/nfs/x1x2x1/signal/skim_phase1/single"
+    signal_dir = "/afs/desy.de/user/d/diepholq/nfs/x1x2x1/signal/skim_pmssm/phase1_skims/single"
+# signal_dir = "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm"
 def main():
     points = {}
     
@@ -79,7 +80,8 @@ def main():
         print("weight:", weight)
 
         var_Weight = np.zeros(1,dtype=float)
-        var_Weight[0] = weight
+#         var_Weight[0] = weight
+        var_Weight[0] = 1
         nentries = t.GetEntries();
         if t.GetBranchStatus("Weight"):
             if not force:

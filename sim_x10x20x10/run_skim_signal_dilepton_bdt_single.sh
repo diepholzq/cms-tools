@@ -19,10 +19,6 @@ do
         shift # past argument
         shift # past value
         ;;
-        -skim|--skim)
-        SKIM=true
-        shift # past argument
-        ;;
         --pmssm_skims)
         PMSSM_SKIMS=true
         POSITIONAL+=("$1")
@@ -55,16 +51,7 @@ cmsenv
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$CMSSW_BASE/src/cms-tools/lib/classes"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/nfs/dust/cms/user/beinsam/NaturalSusy/CMSSW_11_3_1/src/cms-tools/lib/classes"
 
-SCRIPT_PATH=$ANALYZER_PATH
-if [ -n "$SKIM" ]; then
-    echo "GOT SKIM"
-    SCRIPT_PATH=$SKIMMER_PATH
-fi
-if [ -n "$PMSSM_SKIMS" ]; then
-    echo "GOT PMSSM SKIM"
-    SCRIPT_PATH=$PMSSM_SKIMMER_PATH
-    # SCRIPT_PATH=$SKIMMER_SYST_PATH
-fi
+SCRIPT_PATH=$BDT_SKIMMER_PATH
 
 # Process each input filee
 echo "gonna process these " $INPUT_FILES

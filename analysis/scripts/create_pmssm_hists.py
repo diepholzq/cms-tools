@@ -1,4 +1,4 @@
-# /usr/bin/env python3
+#! /usr/bin/env python3
 
 from ROOT import *
 from glob import glob
@@ -181,6 +181,7 @@ signal_dirs={
         "2017" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/single",
         "2018" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/single"
 }
+
 wanted_year="2017"
 ######## END OF CMDLINE ARGUMENTS ########
 
@@ -227,6 +228,7 @@ def main():
     thnsparse_nuni = THnSparseD("pMSSM Scan nuni","pmssm_scan_nuni",3,bins,lowedges,upedges)
     thnsparse_all = THnSparseD("pMSSM Scan uni","pmssm_scan_uni",3,bins,lowedges,upedges)
     
+    hHt = TH1F("hHt", "hHt", 100, 0, 1000)
 
 
     c1 = TCanvas("c1", "c1", 800, 800)
@@ -576,8 +578,10 @@ def main():
         signal_dir = signal_dirs[wanted_year]
         print("\nNow for year", wanted_year, "signal_dir", signal_dir)
 #         for filename in glob(signal_dir + "/*"+thing2grab+"*"):
-        for filename in glob(signal_dir + "/*"):
+        for ifile, filename in enumerate(glob(signal_dir + "/*")):
             #continue
+#             if ifile > 100:
+#                 break
             print(f"\n\n\nOpening {filename}")
             #fix this
 #             if sam:
@@ -657,7 +661,7 @@ def main():
                     for orth in orthOpt:
                         c1.cd()
                         conditions = analysis_selections.two_leptons_full_bdt_conditions_outside_mtautau_window_sos
-                        drawString = analysis_selections.getFastSimString(wanted_year, lep, conditions).replace("&& (leptonsCorrJetNoMultIso10Dr0.6[1].Pt() <= 3.5 || deltaRCorrJetNoMultIso10Dr0.6 <= 0.3)","")
+                        constraint_string = analysis_selections.getFastSimString(wanted_year, lep, conditions).replace("&& (leptonsCorrJetNoMultIso10Dr0.6[1].Pt() <= 3.5 || deltaRCorrJetNoMultIso10Dr0.6 <= 0.3)","")
 #                                 if variation=='Nom':
 #                                     if isyst==0:
 #                                         histName = deltaM + "2l" + lep + ("Orth" if orth else "")+'Norm'
@@ -665,11 +669,10 @@ def main():
 #                                         histName = deltaM + "2l" + lep + ("Orth" if orth else "")
 #                                 else:
 #                                     histName = deltaM + "2l" + lep + ("Orth" if orth else "")+'_'+syst_weightbased+variation
-#                                 print("drawString:", drawString)
+#                                 print("constraint_string:", constraint_string)
                         observable = analysis_selections.dilepBDTString[wanted_year] + analysis_selections.jetIsos[lep]
-                        formula = TTreeFormula("formula", drawString, tree)
+                        formula = TTreeFormula("formula", constraint_string, tree)
                         print(f"Analysing {tree.GetEntries()} entries...")
-                        print(f"Using Draw String: {drawString}")
                         for ientry in range(tree.GetEntries()):
                             if ientry % 1000 == 0: print(f"    {ientry} done", end="\r")
                             tree.GetEntry(ientry)
@@ -678,20 +681,27 @@ def main():
                             if not passes_selection:
                                 continue
                             if not (getattr(tree, "leptonsCorrJetNoMultIso10Dr0.6")[1].Pt() <= 3.5 or getattr(tree, "deltaRCorrJetNoMultIso10Dr0.6") <= 0.3): continue
-                            pMSSMid1 = tree.pMSSMid1
-                            pMSSMid2 = tree.pMSSMid2
-                            nuni_weights = drawString + systvar_nuni
-                            uni_weights = drawString + systvar_uni
+                            print(f"Using constraint string: {constraint_string}")
+#                             pMSSMid1 = tree.pMSSMid1
+#                             pMSSMid2 = tree.pMSSMid2
+                            pMSSMid1 = 200
+                            pMSSMid2 = 300
+                            nuni_weights = constraint_string + systvar_nuni
+                            uni_weights = constraint_string + systvar_uni
+                            print("nuni_weights", nuni_weights, "uni_weights", uni_weights)
                             formula_nuni_weights = TTreeFormula("formula_nuni", nuni_weights, tree)
                             formula_uni_weights = TTreeFormula("formula_uni", uni_weights, tree)
                             eval_weights_nuni = formula_nuni_weights.EvalInstance()
                             eval_weights_uni = formula_uni_weights.EvalInstance()
+                            print("eval_weights_nuni", eval_weights_nuni, "eval_weights_uni", eval_weights_uni)
                             bdt_val = getattr(tree, observable)
                             selection_passed += int(1)
                             sr_bin = h_skel.GetXaxis().FindBin(bdt_val)
                             coordinates = np.float64([pMSSMid1,pMSSMid2,sr_bin])
+                            print("coordinates", coordinates)
                             thnsparse_nuni.Fill(coordinates, eval_weights_nuni)
                             thnsparse_all.Fill(coordinates, eval_weights_uni)
+                            hHt.Fill(min(tree.HT, 999))
 #                         print(f" \n nuni_weights: {nuni_weights} \n uni_weights {uni_weights}")
                         #weight = analysis_selections.getFastSimString(wanted_year, lep, conditions)
 #                                 weight = analysis_selections.getFastSimString(wanted_year, lep, conditions)+systvar
@@ -763,6 +773,7 @@ def main():
     print("Writing thnsparses")
     thnsparse_nuni.Write()
     thnsparse_all.Write()
+    hHt.Write()
     print('just created', fnew.GetName())
     fnew.Close()
     print("End: " + datetime.now().strftime('%d-%m-%Y %H:%M:%S'))

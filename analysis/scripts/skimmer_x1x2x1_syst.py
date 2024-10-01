@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python3
 
 from ROOT import *
 from glob import glob
@@ -51,11 +51,15 @@ parser.add_argument('-phase1', '--phase1', dest='phase1', help='phase1', action=
 parser.add_argument('-phase1_2018', '--phase1_2018', dest='phase1_2018', help='phase1_2018', action='store_true')
 parser.add_argument('-jecup', '--jecup', dest='jecup', help='jec-up variation', action='store_true')
 parser.add_argument('-jecdown', '--jecdown', dest='jecdown', help='jec-down variation', action='store_true')
+parser.add_argument('-pmssm_skims', '--pmssm_skims', action='store_true', help='do pmssm skims', required=False)
 
 args = parser.parse_args()
 
 print(args)
-    
+
+if args.pmssm_skims:
+    is_pmssm = True
+
 def getDyMuons(c):
     #print "getDyMuons"
     muons = [i for i in range(len(c.Muons)) if c.Muons[i].Pt() >= 20 and bool(c.Muons_mediumID[i]) and bool(c.Muons_passIso[i]) and abs(c.Muons[i].Eta()) <= 2.4]
@@ -548,7 +552,9 @@ def main():
     crossSection = 1
     if signal:
         print('sam', sam)
-        if sam:
+        if is_pmssm:
+            crossSection = 1
+        elif sam:
             if phase1:
                 print('working with input_file', input_file)
                 chiM = os.path.basename(input_file).split("_")[3]
@@ -1684,7 +1690,7 @@ def main():
                 vars["ElSfNom"][0] = lepsfnom
                 vars["ElSfUp"][0] = lepsfup
                 vars["ElSfDown"][0] = lepsfdown                                
-                print('harnassing an electron with pt', leppt, 'sf=', lepsf)              
+                print('harnassing an electron with pt', leppt, 'sf=', lepsfnom, '+/-', lepsfup-lepsfnom, '/', lepsfnom-lepsfdown)
             
         else:
             vars["FastSimWeightPR31285To36122"][0] = 1
