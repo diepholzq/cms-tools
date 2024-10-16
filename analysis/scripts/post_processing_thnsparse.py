@@ -1,28 +1,11 @@
 #! /usr/bin/env python3
 
-from ROOT import *
-from glob import glob
+import ROOT
+from ROOT import TFile
 import argparse
-import sys
+
 import numpy as np
-import os
 
-sys.path.append(os.path.expandvars("$CMSSW_BASE/src/cms-tools/lib"))
-sys.path.append(os.path.expandvars("$CMSSW_BASE/src/cms-tools/"))
-sys.path.append(os.path.expandvars("$CMSSW_BASE/src/cms-tools/lib/classes"))
-
-import utils
-import analysis_ntuples
-import analysis_selections
-
-gROOT.SetBatch(True)
-gStyle.SetOptStat(0)
-
-gSystem.Load('LumiSectMap_C')
-from ROOT import LumiSectMap
-
-#lumi = 5746.370
-#weight = lumi / utils.LUMINOSITY
 
 ####### CMDLINE ARGUMENTS #########
 
@@ -30,118 +13,106 @@ parser = argparse.ArgumentParser(description='Scales pMSSM thnsparse with nuni/u
 parser.add_argument('-i', '--input_file', nargs=1, help='Input Filename', required=True)
 parser.add_argument('--is_test', help='Testing Mode', required=False, action='store_true')
 args = parser.parse_args()
-input_file = args.input_file
+input_file = args.input_file[0]
 is_test = args.is_test
 
-if not is_test:
-    print("THIS IS NOT A DRILL")
+#open the root file
+ROOT_FILE = TFile.Open(input_file, "read")
+ROOT_FILE_WEIGHTED = TFile.Open(input_file.replace(".root", "_weighted.root"), "recreate")
+THN_SPARSE_UNI = ROOT_FILE.Get("pMSSM Scan uni")
+THN_SPARSE_NUNI = ROOT_FILE.Get("pMSSM Scan nuni")
 
-def sum_thn_sparse_bins(file_name):
-    # Open the ROOT file
-    root_file = TFile.Open(file_name, "read")
-    root_file_weighted = TFile.Open(file_name.replace(".root", "_weighted.root"), "recreate")
 
-    # Get the THnSparse object
-    thn_sparse = root_file.Get("pMSSM Scan uni")
-    thn_sparse_nuni = root_file.Get("pMSSM Scan nuni")
-    
+def update_dict(dict, thn_sparse, global_bin_index, num_z_bins):
+    """Updates the dictionary containing the bin contents, ordered by their coordinates.
+        The last entry stored in the z-array is the global bin index, for rescaling purposes.
+    """
+    if thn_sparse.GetBinContent(global_bin_index) != 0:# break
+        bin_coordinates = np.empty(thn_sparse.GetNdimensions(), dtype = np.int32)
+        bin_content = thn_sparse.GetBinContent(global_bin_index, bin_coordinates)
 
-    if not thn_sparse:
-        print(f"Error: THnSparse object '{thn_sparse_name}' not found in the file.")
-        return
+        print(bin_coordinates)
+        print("Content:",bin_content)
+        x_coord = bin_coordinates[0]
+        y_coord = bin_coordinates[1]
+        z_coord = bin_coordinates[2]
+        if dict.get(x_coord) is None:
+            dict[x_coord] = {}
+            dict[x_coord][y_coord] = np.zeros(num_z_bins)
+            dict[x_coord][y_coord][z_coord] = bin_content
+        elif dict[x_coord].get(y_coord) is None:
+            dict[x_coord][y_coord] = np.zeros(num_z_bins)
+            dict[x_coord][y_coord][z_coord] = bin_content
+        else:
+            dict[x_coord][y_coord][z_coord] = bin_content
+    else:
+        print(f"uh-oh: global bin index {global_bin_index} has value {0}")
 
-    bin_indices = np.zeros(thn_sparse.GetNdimensions(), dtype = "double")
-    bin_indices_nuni = np.zeros(thn_sparse_nuni.GetNdimensions(), dtype = "double")
+def rescale(dict_uni, dict_nuni, thn_sparse, global_bin_index):
+    if thn_sparse.GetBinContent(global_bin_index) != 0:
+        #get bin coordinates from global linear bin idx
+        bin_coordinates = np.empty(thn_sparse.GetNdimensions(), dtype = np.int32)
+        bin_content = thn_sparse.GetBinContent(global_bin_index, bin_coordinates)
+        x_coord = bin_coordinates[0]
+        y_coord = bin_coordinates[1]
+        z_coord = bin_coordinates[2]
+
+        #Sum bin contents along z:
+        total_sum_uni = np.sum(dict_uni[x_coord][y_coord])
+        total_sum_nuni = np.sum(dict_nuni[x_coord][y_coord])
+
+        #rescale:
+        thn_sparse.SetBinContent(global_bin_index, bin_content*total_sum_nuni/total_sum_uni)
+
+        print(f"global_bin_index {global_bin_index}, new content = {bin_content*total_sum_nuni/total_sum_uni}")
+
+
+def sum_thn_sparse_bins():
+    """Main function. Loops over filled bins, updates dicts and rescales uni with nuni/uni
+    """
+    # bin_indices = np.zeros(THN_SPARSE_UNI.GetNdimensions(), dtype = "double")
+    # bin_indices_nuni = np.zeros(THN_SPARSE_NUNI.GetNdimensions(), dtype = "double")
 
     # Set the bin indices
-    x_axis = thn_sparse.GetAxis(0)
-    y_axis = thn_sparse.GetAxis(1)
-    z_axis = thn_sparse.GetAxis(2)
+    x_axis_uni = THN_SPARSE_UNI.GetAxis(0)
+    y_axis_uni = THN_SPARSE_UNI.GetAxis(1)
+    z_axis_uni = THN_SPARSE_UNI.GetAxis(2)
 
-    x_axis_nuni= thn_sparse_nuni.GetAxis(0)
-    y_axis_nuni= thn_sparse_nuni.GetAxis(1)
-    z_axis_nuni= thn_sparse_nuni.GetAxis(2)
+    x_axis_nuni= THN_SPARSE_NUNI.GetAxis(0)
+    y_axis_nuni= THN_SPARSE_NUNI.GetAxis(1)
+    z_axis_nuni= THN_SPARSE_NUNI.GetAxis(2)
 
-    num_x_bins = x_axis.GetNbins()
-    num_y_bins = y_axis.GetNbins()
-    num_z_bins = z_axis.GetNbins()
+    num_x_bins_uni = x_axis_uni.GetNbins()
+    num_y_bins_uni = y_axis_uni.GetNbins()
+    num_z_bins_uni = z_axis_uni.GetNbins()
 
     num_x_bins_nuni = x_axis_nuni.GetNbins()
     num_y_bins_nuni = y_axis_nuni.GetNbins()
     num_z_bins_nuni = z_axis_nuni.GetNbins()
-    print(f"For uni: num_x_bins: {num_x_bins}, num_y_bins: {num_y_bins}, num_z_bins: {num_z_bins}")
+    print(f"For uni: num_x_bins: {num_x_bins_uni}, num_y_bins: {num_y_bins_uni}, num_z_bins: {num_z_bins_uni}")
     print(f"For nuni: num_x_bins: {num_x_bins_nuni}, num_y_bins: {num_y_bins_nuni}, num_z_bins: {num_z_bins_nuni}")
 
-    # Sum the contents of the third axis for the specified bin indices
-    time2break = False
-    found_sth = False
-    for bin_x in range(1, int(num_x_bins+1)):
-        if time2break:
-            break
-        bin_indices[0] = x_axis.FindBin(bin_x)
-        bin_indices_nuni[0] = x_axis_nuni.FindBin(bin_x)
-        for bin_y in range(int(1), int(num_y_bins +1)):
-            bin_indices[1] = y_axis.FindBin(bin_y)
-            bin_indices_nuni[1] = y_axis_nuni.FindBin(bin_y)
-            total_sum_uni = 0
-            total_sum_nuni = 0
+    bin_contents_uni = {}
+    bin_contents_nuni = {}
+
+    #update dicts
+    for global_bin_index in range(1,20000):
+        #uni
+        update_dict(bin_contents_uni, THN_SPARSE_UNI, int(global_bin_index), num_z_bins_uni)
+
+        #nuni
+        update_dict(bin_contents_nuni, THN_SPARSE_NUNI, int(global_bin_index), num_z_bins_nuni)
+
+    #rescale
+    for global_bin_index in range(1,20000):
+        rescale(bin_contents_uni, bin_contents_nuni, THN_SPARSE_UNI, global_bin_index)
+
+    ROOT_FILE_WEIGHTED.cd()
+    THN_SPARSE_UNI.Write()
+    ROOT_FILE_WEIGHTED.Close()
+    ROOT_FILE.Close()
 
 
-            #uni
-            rescalable_bins = np.ones(num_z_bins)*(-1)
-            for bin_z in range(1, int(num_z_bins + 1)):
-                bin_indices[2] = z_axis.FindBin(bin_z)
 
-                global_bin_index = thn_sparse.GetBin(bin_indices)
-                bin_content = thn_sparse.GetBinContent(global_bin_index)
-
-                # if global_bin_index > 0: print(global_bin_index)
-                if bin_content > 0:
-                    print(f"bin_content: {bin_content} for global bin index {global_bin_index} \n bin indices = {bin_indices} UNI")
-                    rescalable_bins[bin_z-1] = z_axis.FindBin(bin_z)
-                total_sum_uni += bin_content
-            if bin_content > 0: print(f"total sum uni: {total_sum_uni}")
-
-
-            #nuni
-            for bin_z in range(1, int(num_z_bins + 1)):
-                bin_indices_nuni[2] = z_axis_nuni.FindBin(bin_z)
-
-                global_bin_index_nuni = thn_sparse_nuni.GetBin(bin_indices_nuni)
-                bin_content_nuni = thn_sparse_nuni.GetBinContent(global_bin_index_nuni)
-
-                if bin_content_nuni > 0: print(f"bin_content: {bin_content_nuni} for global bin index {global_bin_index_nuni} \n bin indices = {bin_indices_nuni} NUNI")
-                total_sum_nuni += bin_content_nuni
-            if bin_content_nuni > 0: print(f"total sum nuni: {total_sum_nuni}")
-
-            #rescale
-            for bin_idx in rescalable_bins:
-                if bin_idx < 0:
-                    continue
-                bin_indices[2] = bin_idx
-                global_bin_index = thn_sparse.GetBin(bin_indices)
-                bin_content = thn_sparse.GetBinContent(global_bin_index)
-                if total_sum_uni > 0:
-                    print(f"total sum uni: {total_sum_uni} \n total sum nuni: {total_sum_nuni}")
-                    thn_sparse.SetBinContent(global_bin_index, bin_content*total_sum_nuni/total_sum_uni)
-                if bin_content > 0: print(f"bin_content: {bin_content} for global bin index {global_bin_index} RESCALE")
-
-            # found_sth = False
-            if is_test:
-                if total_sum_nuni == 0:
-                    continue
-                else:
-                    print(f"Just normalized with total integral: {total_sum_nuni}")
-                    time2break = True
-                    break
-
-    root_file_weighted.cd()
-    thn_sparse.Write()
-    root_file_weighted.Close()
-    root_file.Close()
-
-
-file_name = input_file[0]
-
-sum_thn_sparse_bins(file_name)
+sum_thn_sparse_bins()
 

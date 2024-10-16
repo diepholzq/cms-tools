@@ -82,7 +82,7 @@ elif [ -n "$PHASE1_2018" ]; then
     OUTPUT_DIR=$SKIM_SIG_PHASE1_2018_OUTPUT_DIR
 elif [ -n "$PMSSM_SKIMS" ]; then
     INPUT_DIR=$PMSSM_NTUPLES_DIR
-    OUTPUT_DIR=$SKIM_SIG_PMSSM_OUTPUT_DIR
+    OUTPUT_DIR=$SKIM_SIG_PMSSM_OUTPUT_DIR/dataset_Fall17Fast.PMSSM_set_1_prompt_1
 fi
 # elif [ -n "$PMSSM_SKIMS" ]; then          #for use of yuval's skims
 #     INPUT_DIR=$SAM_SIM_NTUPLES_17_DIR
@@ -112,7 +112,7 @@ if [ ! -d "$OUTPUT_DIR/stderr" ]; then
 fi
 
 counter=0
-files_per_job=1 # Set number of files per job
+files_per_job=5 # Set number of files per job
 input_files=""
 job_count=0
 
@@ -167,7 +167,7 @@ elif [ "$JECDOWN" = true ]; then
 fi
 
 # for sim in ${INPUT_DIR}/pMSSM_Fall17FS_set_semiLL-RunIIFall17FS*; do #for semi LL
-for sim in ${INPUT_DIR}/Fall17Fast.PMSSM_set_1_LL_TuneCP2*; do
+for sim in ${INPUT_DIR}/Fall17Fast.PMSSM_set_1_prompt_1*; do
     filename=$(basename $sim .root)
     modified_filename="${filename}${suffix}" # Apply suffix based on JEC option
 

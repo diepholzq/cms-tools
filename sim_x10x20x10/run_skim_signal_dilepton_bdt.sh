@@ -91,14 +91,14 @@ elif [ -n "$ONPHASE0" ]; then
     BDT_DIR=$OUTPUT_WD/cut_optimisation/tmva/dilepton_bdt_phase1
 elif [ -n "$PMSSM_SKIMS" ]; then
     echo "GOT PMSSM_SKIMS"
-    INPUT_DIR=$SKIM_SIG_PMSSM_OUTPUT_DIR
+    INPUT_DIR=$SKIM_SIG_PMSSM_OUTPUT_DIR/dataset_Fall17Fast.PMSSM_set_1_prompt_1
     # INPUT_DIR="/afs/desy.de/user/d/diepholq/nfs/x1x2x1/signal/skim_pmssm/phase1_skims"    for use of yuvals skims
     BDT_DIR="/afs/desy.de/user/n/nissanuv/nfs/x1x2x1/cut_optimisation/tmva/dilepton_bdt_phase1"
 fi
 
 
 counter=0
-files_per_job=20 # Set number of files per job
+files_per_job=6 # Set number of files per job
 job_count=0
 input_files=""
 

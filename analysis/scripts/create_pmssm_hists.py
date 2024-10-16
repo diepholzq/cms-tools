@@ -177,9 +177,9 @@ if wanted_year != "2016":
 
 #change this pmssm
 signal_dirs={
-        "2016" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/single",
-        "2017" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/single",
-        "2018" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/single"
+        "2016" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_1_prompt_1/single",
+        "2017" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_1_prompt_1/single",
+        "2018" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_1_prompt_1/single"
 }
 
 wanted_year="2017"
@@ -682,10 +682,10 @@ def main():
                                 continue
                             if not (getattr(tree, "leptonsCorrJetNoMultIso10Dr0.6")[1].Pt() <= 3.5 or getattr(tree, "deltaRCorrJetNoMultIso10Dr0.6") <= 0.3): continue
                             print(f"Using constraint string: {constraint_string}")
-#                             pMSSMid1 = tree.pMSSMid1
-#                             pMSSMid2 = tree.pMSSMid2
-                            pMSSMid1 = 200
-                            pMSSMid2 = 300
+                            pMSSMid1 = tree.pMSSMid1
+                            pMSSMid2 = tree.pMSSMid2
+                            # pMSSMid1 = 200
+                            # pMSSMid2 = 300
                             nuni_weights = constraint_string + systvar_nuni
                             uni_weights = constraint_string + systvar_uni
                             print("nuni_weights", nuni_weights, "uni_weights", uni_weights)
