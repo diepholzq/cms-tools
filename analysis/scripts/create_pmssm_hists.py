@@ -177,9 +177,9 @@ if wanted_year != "2016":
 
 #change this pmssm
 signal_dirs={
-        "2016" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_1_prompt_1/single",
-        "2017" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_1_prompt_1/single",
-        "2018" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_1_prompt_1/single"
+        "2016" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_1_prompt_2/single",
+        "2017" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_1_prompt_2/single",
+        "2018" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_1_prompt_2/single"
 }
 
 wanted_year="2017"

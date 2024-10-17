@@ -1,0 +1,2 @@
+/afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/run_pmssm_job.sh: line 22: cd: /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/analysis/scripts: No such file or directory
+SysError in <TFile::Flush>: error flushing file pmssm_scan_PMSSM_set_1_prompt_1_TuneCP2_13TeV-pythia8.root Input/output error

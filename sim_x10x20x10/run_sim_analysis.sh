@@ -82,7 +82,7 @@ elif [ -n "$PHASE1_2018" ]; then
     OUTPUT_DIR=$SKIM_SIG_PHASE1_2018_OUTPUT_DIR
 elif [ -n "$PMSSM_SKIMS" ]; then
     INPUT_DIR=$PMSSM_NTUPLES_DIR
-    OUTPUT_DIR=$SKIM_SIG_PMSSM_OUTPUT_DIR/dataset_Fall17Fast.PMSSM_set_1_prompt_1
+    OUTPUT_DIR=$SKIM_SIG_PMSSM_OUTPUT_DIR/dataset_Fall17Fast.PMSSM_set_2_prompt_1
 fi
 # elif [ -n "$PMSSM_SKIMS" ]; then          #for use of yuval's skims
 #     INPUT_DIR=$SAM_SIM_NTUPLES_17_DIR
@@ -167,7 +167,7 @@ elif [ "$JECDOWN" = true ]; then
 fi
 
 # for sim in ${INPUT_DIR}/pMSSM_Fall17FS_set_semiLL-RunIIFall17FS*; do #for semi LL
-for sim in ${INPUT_DIR}/Fall17Fast.PMSSM_set_1_prompt_1*; do
+for sim in ${INPUT_DIR}/Fall17Fast.PMSSM_set_2_prompt_1*; do
     filename=$(basename $sim .root)
     modified_filename="${filename}${suffix}" # Apply suffix based on JEC option
 
@@ -206,6 +206,7 @@ done
 
 # Handle remaining files for the last batch if it does not fill up completely
 if [ $((counter % files_per_job)) != 0 ]; then
+    echo "last batch"
     ((job_count++))
     cmd="$SIM_DIR/run_sim_analysis_single.sh -i $input_files -o ${OUTPUT_DIR}/single/ ${POSITIONAL[@]} --signal" 
     echo "Will run batch $job_count:"
