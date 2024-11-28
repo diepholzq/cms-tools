@@ -96,7 +96,7 @@ def sum_thn_sparse_bins():
     bin_contents_nuni = {}
 
     #update dicts
-    for global_bin_index in range(1,20000):
+    for global_bin_index in range(1,50000):
         #uni
         update_dict(bin_contents_uni, THN_SPARSE_UNI, int(global_bin_index), num_z_bins_uni)
 
@@ -104,7 +104,7 @@ def sum_thn_sparse_bins():
         update_dict(bin_contents_nuni, THN_SPARSE_NUNI, int(global_bin_index), num_z_bins_nuni)
 
     #rescale
-    for global_bin_index in range(1,20000):
+    for global_bin_index in range(1,50000):
         rescale(bin_contents_uni, bin_contents_nuni, THN_SPARSE_UNI, global_bin_index)
 
     ROOT_FILE_WEIGHTED.cd()

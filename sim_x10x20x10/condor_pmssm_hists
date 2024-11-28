@@ -3,9 +3,37 @@ should_transfer_files = IF_NEEDED
 executable = /bin/bash
 notification = Never
 request_memory = 16 GB
++RequestRuntime = 86400
 
-arguments = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/run_pmssm_job.sh
-error = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists.err
-output = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists.out
+arguments = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/run_pmssm_job.sh /afs/desy.de/user/d/diepholq/nfs/x1x2x1/signal/skim_pmssm/dataset_Autumn18Fast.PMSSM_set_1_LL_TuneCP2/single pmssm_scan_2018_PMSSM_set_1_LL_TuneCP2.root
+error = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_1_LL_TuneCP2.err
+output = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_1_LL_TuneCP2.out
 Queue
+arguments = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/run_pmssm_job.sh /afs/desy.de/user/d/diepholq/nfs/x1x2x1/signal/skim_pmssm/dataset_Autumn18Fast.PMSSM_set_1_prompt_1/single pmssm_scan_2018_PMSSM_set_1_prompt_1.root
+error = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_1_prompt_1.err
+output = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_1_prompt_1.out
+Queue
+arguments = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/run_pmssm_job.sh /afs/desy.de/user/d/diepholq/nfs/x1x2x1/signal/skim_pmssm/dataset_Autumn18Fast.PMSSM_set_1_prompt_2/single pmssm_scan_2018_PMSSM_set_1_prompt_2.root
+error = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_1_prompt_2.err
+output = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_1_prompt_2.out
+Queue
+arguments = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/run_pmssm_job.sh /afs/desy.de/user/d/diepholq/nfs/x1x2x1/signal/skim_pmssm/dataset_Autumn18Fast.PMSSM_set_1_prompt_3/single pmssm_scan_2018_PMSSM_set_1_prompt_3.root
+error = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_1_prompt_3.err
+output = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_1_prompt_3.out
+Queue
+arguments = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/run_pmssm_job.sh /afs/desy.de/user/d/diepholq/nfs/x1x2x1/signal/skim_pmssm/dataset_Autumn18Fast.PMSSM_set_2_LL_1/single pmssm_scan_2018_PMSSM_set_2_LL_1.root
+error = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_2_LL_1.err
+output = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_2_LL_1.out
+Queue
+arguments = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/run_pmssm_job.sh /afs/desy.de/user/d/diepholq/nfs/x1x2x1/signal/skim_pmssm/dataset_Autumn18Fast.PMSSM_set_2_prompt_1/single pmssm_scan_2018_PMSSM_set_2_prompt_1.root
+error = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_2_prompt_1.err
+output = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_2_prompt_1.out
+Queue
+arguments = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/run_pmssm_job.sh /afs/desy.de/user/d/diepholq/nfs/x1x2x1/signal/skim_pmssm/dataset_Autumn18Fast.PMSSM_set_2_prompt_2/single pmssm_scan_2018_PMSSM_set_2_prompt_2.root
+error = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_2_prompt_2.err
+output = /afs/desy.de/user/d/diepholq/CMSSW_13_3_3/src/cms-tools/sim_x10x20x10/condor_pmssm_hists_2018_set_2_prompt_2.out
+Queue
+
+
+
 

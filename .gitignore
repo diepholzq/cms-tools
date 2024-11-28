@@ -10,6 +10,7 @@ analysis/output/**
 *.pdf
 *.bak
 *.root
+*.out
 analysis/scripts/latex/*.pdf
 analysis/scripts/latex/*.aux
 analysis/scripts/latex/*.log

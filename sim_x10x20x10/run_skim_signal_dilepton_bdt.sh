@@ -91,7 +91,7 @@ elif [ -n "$ONPHASE0" ]; then
     BDT_DIR=$OUTPUT_WD/cut_optimisation/tmva/dilepton_bdt_phase1
 elif [ -n "$PMSSM_SKIMS" ]; then
     echo "GOT PMSSM_SKIMS"
-    INPUT_DIR=$SKIM_SIG_PMSSM_OUTPUT_DIR/dataset_Fall17Fast.PMSSM_set_1_prompt_3
+    INPUT_DIR=$SKIM_SIG_PMSSM_OUTPUT_DIR/dataset_Autumn18Fast.PMSSM_set_2_prompt_2
     # INPUT_DIR="/afs/desy.de/user/d/diepholq/nfs/x1x2x1/signal/skim_pmssm/phase1_skims"    for use of yuvals skims
     BDT_DIR="/afs/desy.de/user/n/nissanuv/nfs/x1x2x1/cut_optimisation/tmva/dilepton_bdt_phase1"
 fi
@@ -115,6 +115,7 @@ should_transfer_files = IF_NEEDED
 executable = /bin/bash
 notification = Never
 +RequestRuntime = 86400
+request_memory = 16 GB
 EOM
 
 if [ -n "$SAM" ] || [ -n "$PHASE1" ] || [ -n "$PHASE1_2018" ]; then

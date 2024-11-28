@@ -37,14 +37,16 @@ parser.add_argument('-phase1', '--phase1', help='Phase 1, Standard: wanted year=
 parser.add_argument('-channel', '--channel')# 'leptons', tracks, all
 parser.add_argument('-jecup', '--jecup', dest='jecup', help='jec-up variation', action='store_true')
 parser.add_argument('-jecdown', '--jecdown', dest='jecdown', help='jec-down variation', action='store_true')
+parser.add_argument('-i', '--input_folder', nargs=1, help="Input folder name", required=True)
 args = parser.parse_args()
 phase1 = args.phase1
 phase0 = args.phase0
 channel = args.channel
 jecup = args.jecup; jecdown = args.jecdown
+input_folder = args.input_folder
 sam = True
 #Setting standard for wanted year if no phase flag is specified:
-wanted_year="2017"
+wanted_year="2018"
 print('phase0', phase0)
 print('phase1', phase1)
 #choose one of the two
@@ -177,12 +179,19 @@ if wanted_year != "2016":
 
 #change this pmssm
 signal_dirs={
-        "2016" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_1_prompt_2/single",
-        "2017" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_1_prompt_2/single",
-        "2018" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_1_prompt_2/single"
+        "2016" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_2_prompt_1/single",
+        "2017" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_2_prompt_1/single",
+        "2018" : "/nfs/dust/cms/user/diepholq/x1x2x1/signal/skim_pmssm/dataset_Fall17Fast.PMSSM_set_2_prompt_1/single"
 }
 
-wanted_year="2017"
+signal_dirs={
+        "2016" : input_folder[0],
+        "2017" : input_folder[0],
+        "2018" : input_folder[0]
+    }
+print(signal_dirs)
+
+wanted_year="2018"
 ######## END OF CMDLINE ARGUMENTS ########
 
 def main():
@@ -565,7 +574,7 @@ def main():
 
     print("Getting signals...")
     
-    
+#######################################################################################
     ###this is the one we care about
     signal_hists = {}
     i = 0

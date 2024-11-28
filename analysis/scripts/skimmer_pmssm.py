@@ -143,7 +143,7 @@ def main():
     if args.phase1: year ='2017'
     elif args.phase1_2018: year = '2018'
     else: year = '2016'
-    year = "2017"
+    year = "2018"
     eleReco, eleIdiso, eleIdFastFull, muIdiso, muIdFastFull = getRecoIdisoFastfullLeptonSFhistos(year)
     
     if signal and phase1:
